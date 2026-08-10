@@ -1,0 +1,115 @@
+{% extends "blog/base.html" %}
+
+{% block title %}
+    Edit Profile — DevBlog
+{% endblock %}
+
+
+{% block content %}
+
+<section class="section-padding">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-7">
+
+                <div class="form-card">
+
+                    <div class="mb-4">
+
+                        <span class="text-primary fw-semibold small">
+                            ACCOUNT SETTINGS
+                        </span>
+
+                        <h1 class="fw-bold mt-2">
+                            Edit Profile
+                        </h1>
+
+                        <p class="text-muted">
+                            Update your profile information.
+                        </p>
+
+                    </div>
+
+
+                    <form
+                        method="POST"
+                        enctype="multipart/form-data"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Bio
+                            </label>
+
+                            {{ form.bio }}
+
+                            {% if form.bio.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ form.bio.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Profile Picture
+                            </label>
+
+                            {{ form.profile_image }}
+
+                            {% if form.profile_image.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ form.profile_image.errors }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                <i class="bi bi-check-lg me-1"></i>
+                                Save Changes
+                            </button>
+
+
+                            <a
+                                href="{% url 'profile' %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

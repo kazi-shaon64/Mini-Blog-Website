@@ -1,0 +1,81 @@
+{% extends 'blog/base.html' %}
+
+
+{% block title %}
+Access Denied — DevBlog
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center py-5">
+
+        <div class="display-1 fw-bold text-danger mb-3">
+
+            403
+
+        </div>
+
+
+        <h1 class="fw-bold">
+
+            Access Denied
+
+        </h1>
+
+
+        <p class="text-muted mx-auto" style="max-width: 550px;">
+
+            You don't have permission to perform this action.
+            You can only manage your own articles.
+
+        </p>
+
+
+        <div class="mt-4">
+
+            <a
+                href="{% url 'home' %}"
+                class="btn btn-primary me-2"
+            >
+
+                <i class="bi bi-house me-1"></i>
+
+                Home
+
+            </a>
+
+
+            {% if user.is_authenticated %}
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="btn btn-outline-primary"
+                >
+
+                    Dashboard
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'login' %}"
+                    class="btn btn-outline-primary"
+                >
+
+                    Login
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

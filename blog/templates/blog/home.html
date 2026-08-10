@@ -1,0 +1,225 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+  DevBlog — Share Your Ideas
+{% endblock %}
+
+{% block content %}
+  <!--      =========================
+     HERO
+=========================      -->
+
+  <section class="hero-section">
+    <div class="container text-center">
+      <span class="hero-badge">
+        <i class="bi bi-code-slash me-1"></i>
+        Developer Community
+      </span>
+
+      <h1 class="hero-title">
+        <span id="typing-text"></span>
+        <span class="typing-cursor">|</span>
+      </h1>
+
+      <p class="hero-description mx-auto mt-4">Discover useful articles about Python, Django, web development and backend engineering.</p>
+
+      <!-- Search UI -->
+
+      <div class="search-box">
+        <form method="GET" action="{% url 'home' %}">
+          <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search articles..." value="{{ query }}" />
+
+            <button class="btn btn-primary" type="submit">
+              <i class="bi bi-search me-1"></i>
+
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!--      =========================
+     POSTS
+=========================      -->
+
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <span class="text-primary fw-semibold small">EXPLORE</span>
+
+          <h2 class="section-title mt-1 mb-0">Latest Articles</h2>
+        </div>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'create_post' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>
+            Write Article
+          </a>
+        {% endif %}
+      </div>
+
+      {% if page_obj.object_list %}
+        <div class="row g-4">
+          {% for post in page_obj %}
+            <div class="col-md-6 col-lg-4">
+              <article class="post-card">
+                <span class="post-category">
+                  <i class="bi bi-bookmark me-1"></i>
+                  Blog
+                </span>
+
+                <h3 class="post-title"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h3>
+
+                <p class="post-excerpt">{{ post.content|truncatewords:25 }}</p>
+
+                <div class="post-meta d-flex justify-content-between align-items-center mt-4">
+                  <span>
+                    <i class="bi bi-person-circle"></i>
+
+                    {{ post.author.username }}
+                  </span>
+
+                  <span>
+                    <i class="bi bi-calendar3"></i>
+
+                    {{ post.created_at|date:'M d, Y' }}
+                  </span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="post-meta">
+                    <span class="me-3">
+                      <i class="bi bi-heart"></i>
+
+                      {{ post.likes.count }}
+                    </span>
+
+                    <span>
+                      <i class="bi bi-chat"></i>
+
+                      {{ post.comments.count }}
+                    </span>
+                  </div>
+
+                  <a href="{% url 'post_detail' post.id %}" class="btn btn-sm btn-outline-primary">
+                    Read More
+                    <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                </div>
+              </article>
+            </div>
+          {% endfor %}
+          <div class="text-center text-muted small mb-3">Page {{ page_obj.number }}
+            of
+            {{ page_obj.paginator.num_pages }}</div>
+          {% if page_obj.paginator.num_pages > 1 %}
+            <nav class="mt-5" aria-label="Blog pagination">
+              <ul class="pagination justify-content-center">
+                <!-- Previous -->
+
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&page={{ page_obj.previous_page_number }}">← Previous</a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">← Previous</span>
+                  </li>
+                {% endif %}
+
+                <!-- Page Numbers -->
+
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ num }}</span>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+
+                <!-- Next -->
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">Next</a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">Next →</span>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <i class="bi bi-journal-x d-block"></i>
+
+          <h4 class="fw-bold">No articles yet</h4>
+
+          <p class="text-muted">Be the first person to publish an article.</p>
+
+          {% if user.is_authenticated %}
+            <a href="{% url 'create_post' %}" class="btn btn-primary">Write First Article</a>
+          {% else %}
+            <a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+
+
+
+{% block extra_js %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Prevent duplicate execution
+      if (window.typingAnimationStarted) {
+        return
+      }
+    
+      window.typingAnimationStarted = true
+    
+      const text = 'Share Ideas. Build Knowledge.'
+    
+      const typingText = document.getElementById('typing-text')
+    
+      const cursor = document.querySelector('.typing-cursor')
+    
+      if (!typingText || !cursor) {
+        return
+      }
+    
+      let index = 0
+    
+      function typeText() {
+        if (index < text.length) {
+          typingText.textContent += text.charAt(index)
+    
+          index++
+    
+          setTimeout(typeText, 80)
+        } else {
+          setTimeout(function () {
+            cursor.style.display = 'none'
+          }, 1000)
+        }
+      }
+    
+      typeText()
+    })
+  </script>
+{% endblock %}
