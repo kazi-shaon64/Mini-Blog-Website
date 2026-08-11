@@ -399,6 +399,7 @@ def search(request):
         "blog/search.html",
         {
             "query": query,
+            "posts": posts,
             "page_obj": page_obj,
         }
     )
