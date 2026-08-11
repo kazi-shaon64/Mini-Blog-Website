@@ -1,165 +1,375 @@
 {% extends 'blog/base.html' %}
 
 {% block title %}
-  Search — DevBlog
+Search — DevBlog
 {% endblock %}
 
 {% block content %}
-  <section class="section-padding">
-    <div class="container">
-      <!-- Search Header -->
 
-      <div class="search-header mb-5">
-        <span class="text-primary fw-semibold">SEARCH</span>
+<div class="container py-5">
 
-        <h1 class="fw-bold mt-2">Find Articles</h1>
+    <!-- Search Header -->
 
-        <p class="text-muted">Search articles by title, content or author.</p>
-      </div>
+    <div class="search-header mb-5">
 
-      <!-- Search Form -->
+        <span class="text-primary fw-semibold">
+            SEARCH
+        </span>
 
-      <form method="GET" action="{% url 'search' %}" class="search-form mb-5">
+        <h1 class="fw-bold mt-2">
+            Find Articles
+        </h1>
+
+        <p class="text-muted">
+            Search articles by title, content or author.
+        </p>
+
+    </div>
+
+
+    <!-- Search Form -->
+
+    <form
+        method="GET"
+        action="{% url 'search' %}"
+        class="search-form mb-5"
+    >
+
         <div class="input-group input-group-lg">
-          <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search articles..." autocomplete="off" />
 
-          <button type="submit" class="btn btn-primary">
-            <i class="bi bi-search me-1"></i>
-            Search
-          </button>
+            <input
+                type="search"
+                name="q"
+                value="{{ query }}"
+                class="form-control"
+                placeholder="Search articles..."
+                autocomplete="off"
+            />
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-search me-1"></i>
+                Search
+            </button>
+
         </div>
-      </form>
 
-      <!-- Search Results -->
+    </form>
 
-      {% if query %}
+
+    <!-- Search Results -->
+
+    {% if query %}
+
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 class="section-title mb-1">Search Results</h2>
 
-            <p class="text-muted mb-0">
-              {% if posts %}
-                {{ posts|length }} article{{ posts|length|pluralize }}
-                found for
-                <strong>"{{ query }}"</strong>
-              {% else %}
-                No articles found for
-                <strong>"{{ query }}"</strong>
-              {% endif %}
-            </p>
-          </div>
-        </div>
+            <div>
 
-        {% if posts %}
-          <div class="row g-4">
-            {% for post in page_obj %}
-              <div class="col-md-6 col-lg-4">
-                <article class="post-card h-100">
-                  <div class="mb-3">
-                    <span class="post-category">Article</span>
-                  </div>
+                <h2 class="section-title mb-1">
+                    Search Results
+                </h2>
 
-                  <h3 class="post-title"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h3>
+                <p class="text-muted mb-0">
 
-                  <p class="post-excerpt">{{ post.content|truncatewords:25 }}</p>
+                    {% if page_obj.object_list %}
 
-                  <div class="post-author">
-                    <span>
-                      <i class="bi bi-person me-1"></i>
-                      {{ post.author.username }}
-                    </span>
+                        {{ page_obj.paginator.count }}
+                        article{{ page_obj.paginator.count|pluralize }}
+                        found for
 
-                    <span>
-                      <i class="bi bi-calendar3 me-1"></i>
-                      {{ post.created_at|date:'M d, Y' }}
-                    </span>
-                  </div>
+                        <strong>
+                            "{{ query }}"
+                        </strong>
 
-                  <div class="mt-4">
-                    <a href="{% url 'post_detail' post.id %}" class="btn btn-outline-primary btn-sm">
-                      Read Article
-                      <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
-                  </div>
-                </article>
-              </div>
-            {% endfor %}
-
-            {% if page_obj.paginator.num_pages > 1 %}
-              <nav class="mt-5" aria-label="Search pagination">
-                <ul class="pagination justify-content-center">
-                  <!-- Previous -->
-
-                  {% if page_obj.has_previous %}
-                    <li class="page-item">
-                      <a class="page-link" href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">← Previous</a>
-                    </li>
-                  {% else %}
-                    <li class="page-item disabled">
-                      <span class="page-link">← Previous</span>
-                    </li>
-                  {% endif %}
-
-                  <!-- Page Numbers -->
-
-                  {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                      <li class="page-item active">
-                        <span class="page-link">{{ num }}</span>
-                      </li>
                     {% else %}
-                      <li class="page-item">
-                        <a class="page-link" href="?q={{ query|urlencode }}&page={{ num }}">{{ num }}</a>
-                      </li>
+
+                        No articles found for
+
+                        <strong>
+                            "{{ query }}"
+                        </strong>
+
                     {% endif %}
-                  {% endfor %}
 
-                  <!-- Next -->
+                </p>
 
-                  {% if page_obj.has_next %}
-                    <li class="page-item">
-                      <a class="page-link" href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">Next →</a>
-                    </li>
-                  {% else %}
-                    <li class="page-item disabled">
-                      <span class="page-link">Next →</span>
-                    </li>
-                  {% endif %}
-                </ul>
-              </nav>
-            {% endif %}
-          </div>
-        {% else %}
-          <!-- No Results -->
-
-          <div class="empty-state">
-            <div class="empty-icon">
-              <i class="bi bi-search"></i>
             </div>
 
-            <h3>No articles found</h3>
+        </div>
 
-            <p class="text-muted">
-              We couldn't find any articles matching
-              <strong>"{{ query }}"</strong>.
-            </p>
 
-            <a href="{% url 'home' %}" class="btn btn-primary">Browse All Articles</a>
-          </div>
+        <!-- Results -->
+
+        {% if page_obj.object_list %}
+
+            <div class="row g-4">
+
+                {% for post in page_obj %}
+
+                    <div class="col-md-6 col-lg-4">
+
+                        <article class="post-card h-100">
+
+                            <!-- Category -->
+
+                            <div class="mb-3">
+
+                                <span class="post-category">
+
+                                    <i class="bi bi-bookmark me-1"></i>
+
+                                    Article
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- Title -->
+
+                            <h3 class="post-title">
+
+                                <a
+                                    href="{% url 'post_detail' post.id %}"
+                                >
+                                    {{ post.title }}
+                                </a>
+
+                            </h3>
+
+
+                            <!-- Content -->
+
+                            <p class="post-excerpt">
+
+                                {{ post.content|truncatewords:25 }}
+
+                            </p>
+
+
+                            <!-- Author / Date -->
+
+                            <div class="post-author">
+
+                                <span>
+
+                                    <i class="bi bi-person me-1"></i>
+
+                                    {{ post.author.username }}
+
+                                </span>
+
+
+                                <span>
+
+                                    <i class="bi bi-calendar3 me-1"></i>
+
+                                    {{ post.created_at|date:'M d, Y' }}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- Read More -->
+
+                            <div class="mt-4">
+
+                                <a
+                                    href="{% url 'post_detail' post.id %}"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+
+                                    Read Article
+
+                                    <i class="bi bi-arrow-right ms-1"></i>
+
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- Pagination -->
+
+            {% if page_obj.paginator.num_pages > 1 %}
+
+                <nav
+                    class="mt-5"
+                    aria-label="Search pagination"
+                >
+
+                    <ul class="pagination justify-content-center">
+
+
+                        <!-- Previous -->
+
+                        {% if page_obj.has_previous %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                >
+                                    ← Previous
+                                </a>
+
+                            </li>
+
+                        {% else %}
+
+                            <li class="page-item disabled">
+
+                                <span class="page-link">
+                                    ← Previous
+                                </span>
+
+                            </li>
+
+                        {% endif %}
+
+
+                        <!-- Page Numbers -->
+
+                        {% for num in page_obj.paginator.page_range %}
+
+                            {% if page_obj.number == num %}
+
+                                <li class="page-item active">
+
+                                    <span class="page-link">
+                                        {{ num }}
+                                    </span>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link"
+                                        href="?q={{ query|urlencode }}&page={{ num }}"
+                                    >
+                                        {{ num }}
+                                    </a>
+
+                                </li>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        <!-- Next -->
+
+                        {% if page_obj.has_next %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}"
+                                >
+                                    Next →
+                                </a>
+
+                            </li>
+
+                        {% else %}
+
+                            <li class="page-item disabled">
+
+                                <span class="page-link">
+                                    Next →
+                                </span>
+
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                </nav>
+
+            {% endif %}
+
+
+        {% else %}
+
+            <!-- No Results -->
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </div>
+
+                <h3>
+                    No articles found
+                </h3>
+
+                <p class="text-muted">
+
+                    We couldn't find any articles matching
+
+                    <strong>
+                        "{{ query }}"
+                    </strong>.
+
+                </p>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn btn-primary"
+                >
+                    Browse All Articles
+                </a>
+
+            </div>
+
         {% endif %}
-      {% else %}
+
+
+    {% else %}
+
         <!-- Initial State -->
 
         <div class="empty-state">
-          <div class="empty-icon">
-            <i class="bi bi-search"></i>
-          </div>
 
-          <h3>What are you looking for?</h3>
+            <div class="empty-icon">
 
-          <p class="text-muted">Search for Django, Python, REST API, JavaScript or any other topic.</p>
+                <i class="bi bi-search"></i>
+
+            </div>
+
+            <h3>
+                What are you looking for?
+            </h3>
+
+            <p class="text-muted">
+
+                Search for Django, Python, REST API,
+                JavaScript or any other topic.
+
+            </p>
+
         </div>
-      {% endif %}
-    </div>
-  </section>
+
+    {% endif %}
+
+</div>
+
 {% endblock %}
